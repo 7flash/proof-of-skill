@@ -17,7 +17,7 @@ contract('Hackaton', function([creator, participant1, participant2, participant3
 		this.participants = [participant1, participant2, participant3];
 		this.certificates = [this.certificate1.address, this.certificate2.address, this.certificate3.address];
 
-		this.search = await ChampionSearch.new(this.participants, this.participants, this.certificates);
+		this.search = await ChampionSearch.new(this.participants, this.certificates);
 
 		await this.certificate1.confirm({ from: participant1 });
 		await this.certificate2.confirm({ from: participant1 });

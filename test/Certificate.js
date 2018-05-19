@@ -4,7 +4,7 @@ const utils = require("./utils");
 const expect = utils.expect;
 const expectThrow = utils.expectThrow;
 
-contract('Certificate', function([creator, teamAddress, someGuy]) {
+contract('Certificate', function([creator, teamAddress, someGuy, eagerGuy]) {
 	before(async function() {
 		this.certificate = await Certificate.new(teamAddress, "Charity");
 	});
@@ -42,5 +42,14 @@ contract('Certificate', function([creator, teamAddress, someGuy]) {
 
 		expect(await this.certificate.metadata()).to.be.equal("Link to proof");
 		expect(await this.certificate.description()).to.be.equal("Charity");
+	});
+
+	it("bot should be able to proxify confirmation from oracle", async function() {
+		const message = this.certificate.address;
+		const signature = web3.eth.sign(eagerGuy, web3.sha3(message));
+
+		await this.certificate.confirmFrom(eagerGuy, message, signature);
+
+		expect(await this.certificate.isConfirmedBy(eagerGuy)).to.be.equal(true);
 	});
 });

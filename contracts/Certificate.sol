@@ -1,6 +1,10 @@
 pragma solidity ^0.4.23;
 
+import "openzeppelin-solidity/contracts/ECRecovery.sol";
+
 contract Certificate {
+    using ECRecovery for bytes32;
+
     string public description;
     string public metadata;
 
@@ -28,12 +32,32 @@ contract Certificate {
     function confirm()
         external returns(bool)
     {
-        require(!isConfirmedBy(msg.sender));
-
-        confirmedBy[msg.sender] = true;
-        confirmations.push(msg.sender);
+        confirmInternal(msg.sender);
 
         return true;
+    }
+
+    function confirmFrom(address _oracle, bytes32 hash, bytes sig)
+        external returns(bool)
+    {
+        require(_oracle != msg.sender);
+
+        bytes32 ethHash = hash.toEthSignedMessageHash();
+
+        require(ethHash.recover(sig) == _oracle);
+
+        confirmInternal(_oracle);
+
+        return true;
+    }
+
+    function confirmInternal(address _oracle)
+        internal
+    {
+        require(confirmedBy[_oracle] == false);
+
+        confirmedBy[_oracle] = true;
+        confirmations.push(_oracle);
     }
 
     function isConfirmedBy(address _oracle)

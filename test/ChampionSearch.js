@@ -14,7 +14,7 @@ contract('ChampionSearch', function([creator, participant1, participant2, partic
 		this.participants = [participant1, participant2, participant3];
 		this.certificates = [this.certificate1.address, this.certificate2.address, this.certificate3.address];
 
-		this.search = await ChampionSearch.new(this.participants, this.participants, this.certificates);
+		this.search = await ChampionSearch.new(this.participants, this.certificates);
 
 		await this.certificate1.confirm({ from: participant1 });
 		await this.certificate2.confirm({ from: participant1 });
@@ -25,12 +25,6 @@ contract('ChampionSearch', function([creator, participant1, participant2, partic
 		expect(await this.search.oracles(0)).to.be.equal(participant1);
 		expect(await this.search.oracles(1)).to.be.equal(participant2);
 		expect(await this.search.oracles(2)).to.be.equal(participant3);
-	});
-
-	it("should have candidates", async function() {
-		expect(await this.search.candidates(0)).to.be.equal(participant1);
-		expect(await this.search.candidates(1)).to.be.equal(participant2);
-		expect(await this.search.candidates(2)).to.be.equal(participant3);
 	});
 
 	it("should have certificates", async function() {

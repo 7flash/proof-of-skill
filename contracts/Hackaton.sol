@@ -7,7 +7,7 @@ contract Hackaton {
     address public conditions;
     address public rewardToken;
 
-    function Hackaton(address _conditions, address _rewardToken) {
+    constructor(address _conditions, address _rewardToken) public {
         conditions = _conditions;
         rewardToken = _rewardToken;
     }
@@ -17,12 +17,12 @@ contract Hackaton {
     {
         bool isCertificateOwner = Certificate(_certificate).checkOwner(msg.sender);
 
-        bool isWinner = ChampionSearch(conditions).check(_certificate);
+        bool isChampion = ChampionSearch(conditions).check(_certificate);
 
         uint256 rewardAmount = Token(rewardToken).balanceOf(this);
 
         require(isCertificateOwner);
-        require(isWinner);
+        require(isChampion);
         require(rewardAmount > 0);
 
         Token(rewardToken).transfer(msg.sender, rewardAmount);

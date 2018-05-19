@@ -8,14 +8,35 @@ contract ChampionSearch {
     address[] public oracles;
     address[] public certificates;
 
+    address champion;
+    uint256 championRating = 0;
 
     bool public votingHasEnded = false;
 
-    function ChampionSearch(address[] _oracles, address[] _certificates) {
+    constructor(address[] _oracles, address[] _certificates) public {
         oracles = _oracles;
         certificates = _certificates;
 
         admin = msg.sender;
+    }
+
+    function finalizeVoting() private {
+      uint256 maxRating = 0;
+
+      for(uint256 i = 0; i < certificates.length; i++) {
+          uint256 currentRating = 0;
+
+          for(uint256 j = 0; j < oracles.length; j++) {
+              if(Certificate(certificates[i]).isConfirmedBy(oracles[j])) {
+                  currentRating++;
+              }
+          }
+
+          if(currentRating > maxRating) {
+              championRating = currentRating;
+              champion = certificates[i];
+          }
+      }
     }
 
     function check(address _certificate)
@@ -23,25 +44,7 @@ contract ChampionSearch {
     {
         require(votingHasEnded == true);
 
-        uint256 maxRating = 0;
-        address currentWinner;
-
-        for(uint256 i = 0; i < certificates.length; i++) {
-            uint256 currentRating = 0;
-
-            for(uint256 j = 0; j < oracles.length; j++) {
-                if(Certificate(certificates[i]).isConfirmedBy(oracles[j])) {
-                    currentRating++;
-                }
-            }
-
-            if(currentRating > maxRating) {
-                maxRating = currentRating;
-                currentWinner = certificates[i];
-            }
-        }
-
-        if(_certificate == currentWinner) {
+        if(_certificate == champion) {
             return true;
         } else {
             return false;
@@ -53,6 +56,8 @@ contract ChampionSearch {
     {
         require(admin == msg.sender);
         require(votingHasEnded == false);
+
+        finalizeVoting();
 
         votingHasEnded = true;
     }

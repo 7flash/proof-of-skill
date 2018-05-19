@@ -6,14 +6,13 @@ contract ChampionSearch {
     address admin;
 
     address[] public oracles;
-    address[] public candidates;
     address[] public certificates;
+
 
     bool public votingHasEnded = false;
 
-    function ChampionSearch(address[] _oracles, address[] _candidates, address[] _certificates) {
+    function ChampionSearch(address[] _oracles, address[] _certificates) {
         oracles = _oracles;
-        candidates = _candidates;
         certificates = _certificates;
 
         admin = msg.sender;

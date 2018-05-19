@@ -37,14 +37,14 @@ contract Certificate {
         return true;
     }
 
-    function confirmFrom(address _oracle, bytes32 hash, bytes sig)
-        external returns(bool)
+    function confirmFrom(address _oracle, bytes sig)
+        public returns(bool)
     {
         require(_oracle != msg.sender);
 
-        bytes32 ethHash = hash.toEthSignedMessageHash();
+        bytes32 message = sha3(address(this)).toEthSignedMessageHash();
 
-        require(ethHash.recover(sig) == _oracle);
+        require(message.recover(sig) == _oracle);
 
         confirmInternal(_oracle);
 

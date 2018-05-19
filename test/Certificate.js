@@ -4,6 +4,8 @@ const utils = require("./utils");
 const expect = utils.expect;
 const expectThrow = utils.expectThrow;
 
+const sha3 = require('solidity-sha3').default;
+
 contract('Certificate', function([creator, teamAddress, someGuy, eagerGuy]) {
 	before(async function() {
 		this.certificate = await Certificate.new(teamAddress, "Charity");
@@ -46,10 +48,11 @@ contract('Certificate', function([creator, teamAddress, someGuy, eagerGuy]) {
 
 	it("bot should be able to proxify confirmation from oracle", async function() {
 		const message = this.certificate.address;
-		const signature = web3.eth.sign(eagerGuy, web3.sha3(message));
 
-		await this.certificate.confirmFrom(eagerGuy, message, signature);
+		const signature = web3.eth.sign(eagerGuy, sha3(message));
 
-		expect(await this.certificate.isConfirmedBy(eagerGuy)).to.be.equal(true);
+		await this.certificate.confirmFrom(eagerGuy, signature);
+
+		expect(await this.certificate.confirmedBy(eagerGuy)).to.be.equal(true);
 	});
 });

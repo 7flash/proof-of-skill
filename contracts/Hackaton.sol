@@ -7,7 +7,7 @@ contract Hackaton {
     address public conditions;
     address public rewardToken;
 
-    function Hackaton(address _conditions, address _rewardToken) {
+    constructor(address _conditions, address _rewardToken) public {
         conditions = _conditions;
         rewardToken = _rewardToken;
     }

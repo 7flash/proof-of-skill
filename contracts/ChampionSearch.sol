@@ -13,7 +13,7 @@ contract ChampionSearch {
 
     bool public votingHasEnded = false;
 
-    function ChampionSearch(address[] _oracles, address[] _certificates) {
+    constructor(address[] _oracles, address[] _certificates) public {
         oracles = _oracles;
         certificates = _certificates;
 

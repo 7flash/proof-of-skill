@@ -36,4 +36,11 @@ contract('Certificate', function([creator, teamAddress, someGuy]) {
 
 		await expectThrow(this.certificate.confirmations(1));
 	});
+
+	it("owner should be able to change metadata of certificate", async function() {
+		await this.certificate.changeMetadata("Link to proof", { from: teamAddress });
+
+		expect(await this.certificate.metadata()).to.be.equal("Link to proof");
+		expect(await this.certificate.description()).to.be.equal("Charity");
+	});
 });

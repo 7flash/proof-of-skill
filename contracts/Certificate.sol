@@ -66,6 +66,10 @@ contract Certificate {
         return confirmedBy[_oracle];
     }
 
+    function getNumberOfConfirmations() public constant returns(uint count) {
+        return confirmations.length;
+    }
+
     function checkOwner(address _addr)
         public constant returns (bool)
     {

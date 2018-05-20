@@ -27,7 +27,7 @@ contract Charity {
         require(charityAmount > 0);
 
         uint256 transferAmount = uint256(token.getInitialSupply() /
-          (eligibility.getNumberOfEligibleCertificates() * 10 ** uint256(token.getDecimals())));
+          (eligibility.getNumberOfEligibleCertificates() * 10 ** uint256(token.decimals())));
 
         token.transfer(msg.sender, transferAmount);
 

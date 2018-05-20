@@ -14,7 +14,7 @@ contract Certificate {
 
     address[] public confirmations;
 
-    function Certificate(address _owner, string _description) public {
+    constructor(address _owner, string _description) public {
         owner = _owner;
         description = _description;
     }
@@ -64,6 +64,10 @@ contract Certificate {
         public constant returns (bool)
     {
         return confirmedBy[_oracle];
+    }
+
+    function getNumberOfConfirmations() public constant returns(uint count) {
+        return confirmations.length;
     }
 
     function checkOwner(address _addr)

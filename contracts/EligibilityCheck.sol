@@ -2,14 +2,13 @@ pragma solidity ^0.4.23;
 
 import "./Certificate.sol";
 
-contract ChampionSearch {
+contract EligibilityCheck {
     address admin;
 
     address[] public oracles;
     address[] public certificates;
 
-    address champion;
-    uint256 championRating = 0;
+    uint256 public numberOfEligibleCertificates;
 
     bool public votingHasEnded = false;
 
@@ -18,25 +17,17 @@ contract ChampionSearch {
         certificates = _certificates;
 
         admin = msg.sender;
+
     }
 
     function finalizeVoting() private {
-      uint256 maxRating = 0;
-
-      for(uint256 i = 0; i < certificates.length; i++) {
-          uint256 currentRating = 0;
-
-          for(uint256 j = 0; j < oracles.length; j++) {
-              if(Certificate(certificates[i]).isConfirmedBy(oracles[j])) {
-                  currentRating++;
-              }
-          }
-
-          if(currentRating > maxRating) {
-              championRating = currentRating;
-              champion = certificates[i];
-          }
-      }
+        uint256 count = 0;
+        for(uint256 i = 0; i < certificates.length; i++) {
+            if (Certificate(certificates[i]).getNumberOfConfirmations() > 0) {
+                count = count + 1;
+            }
+        }
+        numberOfEligibleCertificates = count;
     }
 
     function check(address _certificate)
@@ -44,12 +35,14 @@ contract ChampionSearch {
     {
         require(votingHasEnded == true);
 
-        if(_certificate == champion) {
-            return true;
-        } else {
-            return false;
+        for(uint256 i = 0; i < certificates.length; i++) {
+            if (certificates[i] == _certificate && Certificate(_certificate).getNumberOfConfirmations() > 0) {
+                return true;
+            }
         }
+        return false;
     }
+
 
     function finishVoting()
         external returns (bool)
@@ -61,4 +54,9 @@ contract ChampionSearch {
 
         votingHasEnded = true;
     }
+
+    function getNumberOfEligibleCertificates() public view returns (uint256) {
+        return numberOfEligibleCertificates;
+    }
+
 }
